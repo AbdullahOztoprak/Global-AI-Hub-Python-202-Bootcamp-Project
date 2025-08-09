@@ -41,9 +41,21 @@ def test_persistence(tmp_path):
     assert len(books) == 1
     assert books[0].isbn == "978-0199535675"
 
+
 def test_corrupted_json(tmp_path):
     test_file = tmp_path / "test_library.json"
     with open(test_file, "w", encoding="utf-8") as f:
         f.write("not a json")
     library = Library(str(test_file))
     assert library.list_books() == []
+
+def test_save_books_exception(monkeypatch, tmp_path):
+    test_file = tmp_path / "test_library.json"
+    library = Library(str(test_file))
+    book = Book("Ulysses", "James Joyce", "978-0199535675")
+    library.add_book(book)
+    def raise_io_error(*args, **kwargs):
+        raise IOError("Mocked IO error")
+    monkeypatch.setattr("builtins.open", raise_io_error)
+    # Should print error but not raise
+    library.save_books()
