@@ -3,5 +3,65 @@
         "title": "The Hunger Games",
         "author": "Unknown",
         "isbn": "978-0439023528"
+    },
+    {
+        "title": "Adventures of Huckleberry Finn",
+        "author": "Unknown",
+        "isbn": "9780143107323"
+    },
+    {
+        "title": "To Kill a Mockingbird",
+        "author": "Unknown",
+        "isbn": "9780060935467"
+    },
+    {
+        "title": "Nineteen Eighty-Four",
+        "author": "Unknown",
+        "isbn": "9780451524935"
+    },
+    {
+        "title": "The Great Gatsby",
+        "author": "F. Scott Fitzgerald",
+        "isbn": "9780141182636"
+    },
+    {
+        "title": "Picture of Dorian Gray",
+        "author": "Oscar Wilde, Coralie Bickford-smith, Robert Mighall",
+        "isbn": "9780141442464"
+    },
+    {
+        "title": "Dracula",
+        "author": "Bram Stoker",
+        "isbn": "9780141439846"
+    },
+    {
+        "title": "Frankenstein",
+        "author": "Mary Shelley",
+        "isbn": "9780141439471"
+    },
+    {
+        "title": "Wuthering Heights",
+        "author": "Unknown",
+        "isbn": "9780141439556"
+    },
+    {
+        "title": "Great Expectations",
+        "author": "Unknown",
+        "isbn": "9780141439563"
+    },
+    {
+        "title": "Moby-Dick, or, The whale",
+        "author": "Herman Melville",
+        "isbn": "9780142437247"
+    },
+    {
+        "title": "Pride and Prejudice",
+        "author": "Unknown",
+        "isbn": "9780141439518"
+    },
+    {
+        "title": "Jane Eyre",
+        "author": "Charlotte Brontë",
+        "isbn": "9780141441146"
     }
 ]
