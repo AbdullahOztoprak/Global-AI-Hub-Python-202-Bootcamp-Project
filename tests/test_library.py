@@ -79,8 +79,6 @@ def test_corrupted_json(tmp_path):
         f.write("not a json")
     library = Library(str(test_file))
     assert library.list_books() == []
-    library = Library(str(test_file))
-    book = Book("Ulysses", "James Joyce", "978-0199535675")
     library.add_book(book)
     def raise_io_error(*args, **kwargs):
         raise IOError("Mocked IO error")
