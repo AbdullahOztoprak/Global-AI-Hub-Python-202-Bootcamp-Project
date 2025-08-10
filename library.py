@@ -25,39 +25,42 @@ class Library:
 		url = f"https://openlibrary.org/isbn/{isbn}.json"
 		try:
 			response = httpx.get(url, timeout=10)
-			if response.status_code == 404:
-				print("Kitap bulunamadı.")
-				return False
+		except httpx.RequestError:
+			print("Bağlantı hatası: API'ye ulaşılamıyor. Lütfen internet bağlantınızı kontrol edin.")
+			return False
+		if response.status_code == 404:
+			print("Kitap bulunamadı. Lütfen geçerli bir ISBN girin.")
+			return False
+		try:
 			response.raise_for_status()
 			data = response.json()
-			title = data.get("title", "")
-			authors = data.get("authors", [])
-			# Yazar isimlerini almak için ek API çağrısı gerekebilir
-			author_names = []
-			for author in authors:
-				key = author.get("key")
-				if key:
-					author_url = f"https://openlibrary.org{key}.json"
-					try:
-						author_resp = httpx.get(author_url, timeout=5)
-						author_resp.raise_for_status()
-						author_data = author_resp.json()
-						name = author_data.get("name")
-						if name:
-							author_names.append(name)
-					except Exception:
-						continue
-			author_str = ", ".join(author_names) if author_names else "Bilinmiyor"
-			if not title:
-				print("Kitap başlığı API'den alınamadı.")
-				return False
-			book = Book(title, author_str, isbn)
-			self.books.append(book)
-			self.save_books()
-			return True
-		except Exception as e:
-			print(f"API hatası: {e}")
+		except Exception:
+			print("API'den geçerli veri alınamadı.")
 			return False
+		title = data.get("title", "")
+		authors = data.get("authors", [])
+		author_names = []
+		for author in authors:
+			key = author.get("key")
+			if key:
+				author_url = f"https://openlibrary.org{key}.json"
+				try:
+					author_resp = httpx.get(author_url, timeout=5)
+					author_resp.raise_for_status()
+					author_data = author_resp.json()
+					name = author_data.get("name")
+					if name:
+						author_names.append(name)
+				except Exception:
+					continue
+		author_str = ", ".join(author_names) if author_names else "Bilinmiyor"
+		if not title:
+			print("Kitap başlığı API'den alınamadı.")
+			return False
+		book = Book(title, author_str, isbn)
+		self.books.append(book)
+		self.save_books()
+		return True
 
 	def remove_book(self, isbn: str):
 		"""Remove a book by ISBN and save to JSON."""
