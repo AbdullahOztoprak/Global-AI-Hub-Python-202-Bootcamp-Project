@@ -23,8 +23,11 @@ class Library:
 		"""
 		import httpx
 		url = f"https://openlibrary.org/isbn/{isbn}.json"
+		headers = {
+			"User-Agent": "LibraryApp/1.0 (your-email@example.com)"
+		}
 		try:
-			response = httpx.get(url, timeout=10)
+			response = httpx.get(url, headers=headers, timeout=10, follow_redirects=True)
 		except httpx.RequestError:
 			print("Bağlantı hatası: API'ye ulaşılamıyor. Lütfen internet bağlantınızı kontrol edin.")
 			return False
@@ -34,29 +37,34 @@ class Library:
 		try:
 			response.raise_for_status()
 			data = response.json()
-		except Exception:
-			print("API'den geçerli veri alınamadı.")
+		except Exception as e:
+			print(f"API'den geçerli veri alınamadı. Hata: {e}")
+			print(f"Status code: {response.status_code}")
+			print(f"Response text: {response.text[:200]}...")
 			return False
-		title = data.get("title", "")
-		authors = data.get("authors", [])
-		author_names = []
-		for author in authors:
-			key = author.get("key")
-			if key:
-				author_url = f"https://openlibrary.org{key}.json"
-				try:
-					author_resp = httpx.get(author_url, timeout=5)
-					author_resp.raise_for_status()
-					author_data = author_resp.json()
-					name = author_data.get("name")
-					if name:
-						author_names.append(name)
-				except Exception:
-					continue
-		author_str = ", ".join(author_names) if author_names else "Bilinmiyor"
-		if not title:
+		title = data.get("title")
+		if not title or not isinstance(title, str):
 			print("Kitap başlığı API'den alınamadı.")
 			return False
+		authors = data.get("authors")
+		author_names = []
+		if authors:
+			for author in authors:
+				key = author.get("key")
+				if key:
+					author_url = f"https://openlibrary.org{key}.json"
+					try:
+						author_resp = httpx.get(author_url, headers=headers, timeout=5, follow_redirects=True)
+						author_resp.raise_for_status()
+						author_data = author_resp.json()
+						name = author_data.get("name")
+						if name:
+							author_names.append(name)
+					except Exception:
+						continue
+			author_str = ", ".join(author_names) if author_names else "Unknown"
+		else:
+			author_str = "Unknown"
 		book = Book(title, author_str, isbn)
 		self.books.append(book)
 		self.save_books()
