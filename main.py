@@ -16,19 +16,21 @@ def main():
 		print("5. Çıkış")
 		choice = input("Seçiminizi girin (1-5): ").strip()
 
+
 		if choice == "1":
-			title = input("Kitap adı: ").strip()
-			author = input("Yazar: ").strip()
 			isbn = input("ISBN: ").strip()
-			if not title or not author or not isbn:
-				print("Hata: Tüm alanlar doldurulmalıdır.")
+			if not isbn:
+				print("Hata: ISBN alanı boş olamaz.")
 				continue
 			if library.find_book(isbn):
 				print("Hata: Bu ISBN ile zaten bir kitap var.")
 				continue
-			book = Book(title, author, isbn)
-			library.add_book(book)
-			print("Kitap eklendi.")
+			# Artık sadece ISBN ile kitap ekleniyor, başlık ve yazar API'den alınacak
+			result = library.add_book(isbn)
+			if result:
+				print("Kitap eklendi.")
+			else:
+				print("Kitap eklenemedi.")
 
 		elif choice == "2":
 			isbn = input("Silinecek kitabın ISBN'i: ").strip()
