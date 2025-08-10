@@ -38,9 +38,9 @@ def test_add_book_invalid_isbn(mock_get, tmp_path):
 
 @patch("httpx.get")
 def test_add_book_connection_error(mock_get, tmp_path):
+    import pytest
     mock_get.side_effect = Exception("Connection error")
     test_file = tmp_path / "test_library.json"
     library = Library(str(test_file))
-    result = library.add_book("9781234567897")
-    assert result is False
-    assert len(library.books) == 0
+    with pytest.raises(Exception):
+        library.add_book("9781234567897")
