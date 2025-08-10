@@ -14,14 +14,50 @@ class Library:
 		self.load_books()
 
 
+
 	def add_book(self, isbn: str):
 		"""
-		Add a book by ISBN. (Title and author will be fetched from API in next step.)
-		For now, this is a placeholder for API integration.
+		Add a book by ISBN using Open Library API.
+		Fetches title and author from API, creates Book, and adds to library.
+		Returns True if successful, False otherwise.
 		"""
-		# API entegrasyonu bir sonraki adımda yapılacak
-		# Şimdilik ekleme işlemi yapılmıyor
-		return False
+		import httpx
+		url = f"https://openlibrary.org/isbn/{isbn}.json"
+		try:
+			response = httpx.get(url, timeout=10)
+			if response.status_code == 404:
+				print("Kitap bulunamadı.")
+				return False
+			response.raise_for_status()
+			data = response.json()
+			title = data.get("title", "")
+			authors = data.get("authors", [])
+			# Yazar isimlerini almak için ek API çağrısı gerekebilir
+			author_names = []
+			for author in authors:
+				key = author.get("key")
+				if key:
+					author_url = f"https://openlibrary.org{key}.json"
+					try:
+						author_resp = httpx.get(author_url, timeout=5)
+						author_resp.raise_for_status()
+						author_data = author_resp.json()
+						name = author_data.get("name")
+						if name:
+							author_names.append(name)
+					except Exception:
+						continue
+			author_str = ", ".join(author_names) if author_names else "Bilinmiyor"
+			if not title:
+				print("Kitap başlığı API'den alınamadı.")
+				return False
+			book = Book(title, author_str, isbn)
+			self.books.append(book)
+			self.save_books()
+			return True
+		except Exception as e:
+			print(f"API hatası: {e}")
+			return False
 
 	def remove_book(self, isbn: str):
 		"""Remove a book by ISBN and save to JSON."""
