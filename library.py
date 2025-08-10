@@ -13,10 +13,15 @@ class Library:
 		self.books = []
 		self.load_books()
 
-	def add_book(self, book: Book):
-		"""Add a book and save to JSON."""
-		self.books.append(book)
-		self.save_books()
+
+	def add_book(self, isbn: str):
+		"""
+		Add a book by ISBN. (Title and author will be fetched from API in next step.)
+		For now, this is a placeholder for API integration.
+		"""
+		# API entegrasyonu bir sonraki adımda yapılacak
+		# Şimdilik ekleme işlemi yapılmıyor
+		return False
 
 	def remove_book(self, isbn: str):
 		"""Remove a book by ISBN and save to JSON."""
