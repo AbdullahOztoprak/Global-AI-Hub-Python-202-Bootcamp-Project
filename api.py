@@ -1,5 +1,5 @@
 
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 
 # Pydantic models
@@ -27,7 +27,7 @@ def add_book(isbn_data: ISBNModel):
 	if result:
 		book = library.find_book(isbn_data.isbn)
 		return BookModel(title=book.title, author=book.author, isbn=book.isbn)
-	return {"error": "Book could not be added. Check ISBN or API."}
+	raise HTTPException(status_code=400, detail="Book could not be added. Check ISBN or API.")
 
 @app.delete("/books/{isbn}")
 def delete_book(isbn: str):
@@ -35,4 +35,4 @@ def delete_book(isbn: str):
 	if book:
 		library.remove_book(isbn)
 		return {"message": "Book deleted."}
-	return {"error": "Book not found."}
+	raise HTTPException(status_code=404, detail="Book not found.")

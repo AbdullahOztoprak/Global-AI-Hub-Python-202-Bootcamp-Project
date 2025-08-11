@@ -5,27 +5,35 @@ from book import Book
 
 class Library:
 	"""
-	Manages a collection of Book objects and handles persistence in a JSON file.
+	Manages a collection of Book objects and handles persistence in SQLite database.
 	Ensures all changes are saved and loaded reliably.
 	"""
 	def __init__(self, db_name="library.db"):
 		self.db_name = db_name
-		self.conn = sqlite3.connect(self.db_name)
-		self.conn.row_factory = sqlite3.Row
 		self._create_table()
 
+	def _get_connection(self):
+		"""Get a new SQLite connection for each operation to handle threading."""
+		conn = sqlite3.connect(self.db_name, check_same_thread=False)
+		conn.row_factory = sqlite3.Row
+		return conn
+
 	def _create_table(self):
-		with self.conn:
-			self.conn.execute(
-				"""
-				CREATE TABLE IF NOT EXISTS books (
-					id INTEGER PRIMARY KEY AUTOINCREMENT,
-					title TEXT NOT NULL,
-					author TEXT NOT NULL,
-					isbn TEXT UNIQUE NOT NULL
+		conn = self._get_connection()
+		try:
+			with conn:
+				conn.execute(
+					"""
+					CREATE TABLE IF NOT EXISTS books (
+						id INTEGER PRIMARY KEY AUTOINCREMENT,
+						title TEXT NOT NULL,
+						author TEXT NOT NULL,
+						isbn TEXT UNIQUE NOT NULL
+					)
+					"""
 				)
-				"""
-			)
+		finally:
+			conn.close()
 
 
 
@@ -80,9 +88,10 @@ class Library:
 		else:
 			author_str = "Unknown"
 		book = Book(title, author_str, isbn)
+		conn = self._get_connection()
 		try:
-			with self.conn:
-				self.conn.execute(
+			with conn:
+				conn.execute(
 					"INSERT INTO books (title, author, isbn) VALUES (?, ?, ?)",
 					(book.title, book.author, book.isbn)
 				)
@@ -90,23 +99,37 @@ class Library:
 		except sqlite3.IntegrityError:
 			print("Bu ISBN zaten mevcut.")
 			return False
+		finally:
+			conn.close()
 
 	def remove_book(self, isbn: str):
 		"""Remove a book by ISBN from the database."""
-		with self.conn:
-			self.conn.execute("DELETE FROM books WHERE isbn = ?", (isbn,))
+		conn = self._get_connection()
+		try:
+			with conn:
+				conn.execute("DELETE FROM books WHERE isbn = ?", (isbn,))
+		finally:
+			conn.close()
 
 	def list_books(self):
 		"""Return the list of books from the database."""
-		cursor = self.conn.execute("SELECT title, author, isbn FROM books")
-		return [Book(row["title"], row["author"], row["isbn"]) for row in cursor.fetchall()]
+		conn = self._get_connection()
+		try:
+			cursor = conn.execute("SELECT title, author, isbn FROM books")
+			return [Book(row["title"], row["author"], row["isbn"]) for row in cursor.fetchall()]
+		finally:
+			conn.close()
 
 	def find_book(self, isbn: str):
 		"""Find a book by ISBN in the database."""
-		cursor = self.conn.execute("SELECT title, author, isbn FROM books WHERE isbn = ?", (isbn,))
-		row = cursor.fetchone()
-		if row:
-			return Book(row["title"], row["author"], row["isbn"])
-		return None
+		conn = self._get_connection()
+		try:
+			cursor = conn.execute("SELECT title, author, isbn FROM books WHERE isbn = ?", (isbn,))
+			row = cursor.fetchone()
+			if row:
+				return Book(row["title"], row["author"], row["isbn"])
+			return None
+		finally:
+			conn.close()
 
 	# JSON persistence methods removed; all data is now in SQLite
