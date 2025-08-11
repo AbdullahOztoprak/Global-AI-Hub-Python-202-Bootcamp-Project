@@ -9,7 +9,7 @@ Created as part of the Global AI Hub Python 202 Bootcamp to practice OOP, API in
 - Add books by ISBN with automatic title and author fetching from Open Library
 - Manage your collection: add, remove, list, and search books
 - Two interfaces: command line application and web API
-- Persistent storage with JSON file
+- Persistent storage with SQLite database (no more JSON file!)
 - Complete test suite with pytest
 
 ## 🚀 Installation
@@ -39,17 +39,26 @@ uvicorn api:app --reload
 ```
 Open http://127.0.0.1:8000/docs in your browser for interactive API documentation.
 
+
 ## 📋 API Endpoints
 
 - `GET /books` - List all books in the library
 - `POST /books` - Add a new book by ISBN
+- `PUT /books/{isbn}` - Update book details (title and/or author)
 - `DELETE /books/{isbn}` - Remove a book from the library
+
 
 ### Example API Usage
 ```json
 POST /books
 {
   "isbn": "978-0439023528"
+}
+
+PUT /books/978-0439023528
+{
+  "title": "New Title",
+  "author": "New Author"
 }
 ```
 
