@@ -1,6 +1,6 @@
 
 
-import json
+import sqlite3
 from book import Book
 
 class Library:
@@ -8,10 +8,24 @@ class Library:
 	Manages a collection of Book objects and handles persistence in a JSON file.
 	Ensures all changes are saved and loaded reliably.
 	"""
-	def __init__(self, filename="library.json"):
-		self.filename = filename
-		self.books = []
-		self.load_books()
+	def __init__(self, db_name="library.db"):
+		self.db_name = db_name
+		self.conn = sqlite3.connect(self.db_name)
+		self.conn.row_factory = sqlite3.Row
+		self._create_table()
+
+	def _create_table(self):
+		with self.conn:
+			self.conn.execute(
+				"""
+				CREATE TABLE IF NOT EXISTS books (
+					id INTEGER PRIMARY KEY AUTOINCREMENT,
+					title TEXT NOT NULL,
+					author TEXT NOT NULL,
+					isbn TEXT UNIQUE NOT NULL
+				)
+				"""
+			)
 
 
 
@@ -66,47 +80,33 @@ class Library:
 		else:
 			author_str = "Unknown"
 		book = Book(title, author_str, isbn)
-		self.books.append(book)
-		self.save_books()
-		return True
+		try:
+			with self.conn:
+				self.conn.execute(
+					"INSERT INTO books (title, author, isbn) VALUES (?, ?, ?)",
+					(book.title, book.author, book.isbn)
+				)
+			return True
+		except sqlite3.IntegrityError:
+			print("Bu ISBN zaten mevcut.")
+			return False
 
 	def remove_book(self, isbn: str):
-		"""Remove a book by ISBN and save to JSON."""
-		self.books = [book for book in self.books if book.isbn != isbn]
-		self.save_books()
+		"""Remove a book by ISBN from the database."""
+		with self.conn:
+			self.conn.execute("DELETE FROM books WHERE isbn = ?", (isbn,))
 
 	def list_books(self):
-		"""Return the list of books."""
-		return self.books
+		"""Return the list of books from the database."""
+		cursor = self.conn.execute("SELECT title, author, isbn FROM books")
+		return [Book(row["title"], row["author"], row["isbn"]) for row in cursor.fetchall()]
 
 	def find_book(self, isbn: str):
-		"""Find a book by ISBN."""
-		for book in self.books:
-			if book.isbn == isbn:
-				return book
+		"""Find a book by ISBN in the database."""
+		cursor = self.conn.execute("SELECT title, author, isbn FROM books WHERE isbn = ?", (isbn,))
+		row = cursor.fetchone()
+		if row:
+			return Book(row["title"], row["author"], row["isbn"])
 		return None
 
-	def load_books(self):
-		"""
-		Load books from the JSON file.
-		If the file is missing or corrupted, start with an empty list.
-		"""
-		try:
-			with open(self.filename, "r", encoding="utf-8") as f:
-				data = json.load(f)
-				self.books = [Book(**item) for item in data]
-		except FileNotFoundError:
-			self.books = []
-		except json.JSONDecodeError:
-			print(f"Uyarı: {self.filename} bozuk veya geçersiz. Kütüphane boş başlatıldı.")
-			self.books = []
-
-	def save_books(self):
-		"""
-		Save the current list of books to the JSON file.
-		"""
-		try:
-			with open(self.filename, "w", encoding="utf-8") as f:
-				json.dump([book.__dict__ for book in self.books], f, ensure_ascii=False, indent=4)
-		except Exception as e:
-			print(f"Hata: Kitaplar kaydedilemedi: {e}")
+	# JSON persistence methods removed; all data is now in SQLite
