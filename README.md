@@ -1,88 +1,90 @@
 # 📚 Library Management System
 
-A complete library management system with both **CLI** and **REST API** interfaces. Add books by ISBN, manage your collection, and access data through a web API.
+A complete library management system with both CLI and REST API interfaces. Add books by ISBN, manage your collection, and access data through a web API.
 
-Created as part of the Global AI Hub Python 202 Bootcamp to improve my Python skills and to practice OOP, API integration and FastAPI development.
+Created as part of the Global AI Hub Python 202 Bootcamp to practice OOP, API integration and FastAPI development.
 
-## 🎯 What This Project Does
-- **Add books by ISBN** - Just enter an ISBN, get title and author automatically from Open Library
-- **Manage your collection** - Add, remove, list, and search books  
-- **Two ways to use** - Command line interface OR web API
-- **Persistent storage** - All data saved in JSON file
-- **Fully tested** - Complete test suite with pytest
+## 🎯 Features
 
-## 🚀 How to Run This Project
+- Add books by ISBN with automatic title and author fetching from Open Library
+- Manage your collection: add, remove, list, and search books
+- Two interfaces: command line application and web API
+- Persistent storage with JSON file
+- Complete test suite with pytest
 
-### ⚡ Super Quick Start (3 steps)
-1. **Download**: `git clone https://github.com/AbdullahOztoprak/Global-AI-Hub-Python-202-Bootcamp-Project.git`
-2. **Install**: `cd Global-AI-Hub-Python-202-Bootcamp-Project && pip install -r requirements.txt`
-3. **Run**: Choose one option below 👇
+## 🚀 Installation
 
-### Option A: 🖥️ Command Line Interface
+### Step 1: Clone Repository
+```bash
+git clone https://github.com/AbdullahOztoprak/Global-AI-Hub-Python-202-Bootcamp-Project.git
+cd Global-AI-Hub-Python-202-Bootcamp-Project
+```
+
+### Step 2: Install Dependencies
+```bash
+pip install -r requirements.txt
+```
+
+## 🖥️ Usage
+
+### Command Line Interface
 ```bash
 python main.py
 ```
-- Follow the menu to add books by ISBN
-- Try ISBN: `978-0439023528` for testing
+Follow the menu options to manage your library. Try adding a book with ISBN: `978-0439023528`
 
-### Option B: 🌐 Web API Server
+### Web API Server
 ```bash
 uvicorn api:app --reload
 ```
-- Open: http://127.0.0.1:8000/docs 
-- Click "Try it out" to test endpoints
-- Use POST `/books` with `{"isbn": "978-0439023528"}`
+Open http://127.0.0.1:8000/docs in your browser for interactive API documentation.
 
 ## 📋 API Endpoints
-- `GET /books` - List all books
-- `POST /books` - Add book by ISBN (e.g., `{"isbn": "978-0439023528"}`)
-- `DELETE /books/{isbn}` - Remove a book
+
+- `GET /books` - List all books in the library
+- `POST /books` - Add a new book by ISBN
+- `DELETE /books/{isbn}` - Remove a book from the library
+
+### Example API Usage
+```json
+POST /books
+{
+  "isbn": "978-0439023528"
+}
+```
 
 ## 🧪 Testing
+
+Run all tests:
 ```bash
-python -m pytest  # Run all tests
-python -m pytest --cov  # Run with coverage
+python -m pytest
 ```
 
-## 💡 Example Usage
-1. **Add a book**: Enter ISBN `978-0439023528` (The Hunger Games)
-2. **List books**: See your collection  
-3. **API**: Visit `/docs` for interactive testing
+Run tests with coverage:
+```bash
+python -m pytest --cov
+```
 
 ## 🛠️ Tech Stack
+
 - Python 3.12+
-- FastAPI (REST API)
-- httpx (API calls)
-- Pydantic (data models)
-- pytest (testing)
+- FastAPI for REST API
+- httpx for HTTP requests
+- Pydantic for data validation
+- pytest for testing
 
 ## 📁 Project Structure
+
 ```
-book.py         # Book class
+book.py         # Book class definition
 library.py      # Library class and persistence logic
 main.py         # CLI application
 api.py          # FastAPI application
-library.json    # Data storage
+library.json    # Data storage file
 tests/          # Unit tests
 requirements.txt# Project dependencies
 ```
 
 ## 📝 License
-This project is provided for educational purposes. 🎓
-python -m pytest --cov=. --cov-report=term --cov-config=.coveragerc
-```
 
-
-## Project Structure
-```
-book.py         # Book class
-library.py      # Library class and persistence logic
-main.py         # CLI application
-library.json    # Data storage
-tests/          # Unit tests
-.coveragerc     # Coverage configuration
-```
-
-
-## License
-This project is provided for educational purposes. 🎓
+This project is provided for educational purposes.
