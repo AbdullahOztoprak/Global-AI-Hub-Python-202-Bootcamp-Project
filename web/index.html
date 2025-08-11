@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -23,7 +24,7 @@
             margin: 0 auto;
             background: white;
             border-radius: 15px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
             overflow: hidden;
         }
 
@@ -126,7 +127,7 @@
             background: white;
             padding: 20px;
             border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
             border-left: 4px solid #4facfe;
             transition: transform 0.2s;
         }
@@ -182,17 +183,18 @@
             .container {
                 margin: 10px;
             }
-            
+
             .content {
                 padding: 20px;
             }
-            
+
             .header h1 {
                 font-size: 2em;
             }
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <div class="header">
@@ -262,7 +264,7 @@
             messageElement.className = `message ${type}`;
             messageElement.textContent = message;
             messagesDiv.appendChild(messageElement);
-            
+
             // Auto-remove after 5 seconds
             setTimeout(() => {
                 messageElement.remove();
@@ -274,14 +276,14 @@
             try {
                 showMessage('Loading books...', 'loading');
                 const response = await fetch(`${API_BASE}/books`);
-                
+
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
-                
+
                 const books = await response.json();
                 const booksListDiv = document.getElementById('booksList');
-                
+
                 if (books.length === 0) {
                     booksListDiv.innerHTML = '<p style="text-align: center; color: #666; font-style: italic;">No books in your library yet. Add some books!</p>';
                 } else {
@@ -293,11 +295,11 @@
                         </div>
                     `).join('');
                 }
-                
+
                 // Remove loading message
                 const loadingMessages = document.querySelectorAll('.message.loading');
                 loadingMessages.forEach(msg => msg.remove());
-                
+
             } catch (error) {
                 console.error('Error loading books:', error);
                 showMessage('Failed to load books. Make sure the API server is running.', 'error');
@@ -307,7 +309,7 @@
         // Add a new book
         async function addBook() {
             const isbn = document.getElementById('addIsbn').value.trim();
-            
+
             if (!isbn) {
                 showMessage('Please enter an ISBN', 'error');
                 return;
@@ -343,7 +345,7 @@
             const isbn = document.getElementById('updateIsbn').value.trim();
             const title = document.getElementById('updateTitle').value.trim();
             const author = document.getElementById('updateAuthor').value.trim();
-            
+
             if (!isbn) {
                 showMessage('Please enter an ISBN', 'error');
                 return;
@@ -388,7 +390,7 @@
         // Delete a book
         async function deleteBook() {
             const isbn = document.getElementById('deleteIsbn').value.trim();
-            
+
             if (!isbn) {
                 showMessage('Please enter an ISBN', 'error');
                 return;
@@ -419,18 +421,19 @@
         }
 
         // Load books when page loads
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             loadBooks();
         });
 
         // Allow Enter key to submit forms
-        document.getElementById('addIsbn').addEventListener('keypress', function(e) {
+        document.getElementById('addIsbn').addEventListener('keypress', function (e) {
             if (e.key === 'Enter') addBook();
         });
 
-        document.getElementById('deleteIsbn').addEventListener('keypress', function(e) {
+        document.getElementById('deleteIsbn').addEventListener('keypress', function (e) {
             if (e.key === 'Enter') deleteBook();
         });
     </script>
 </body>
+
 </html>
