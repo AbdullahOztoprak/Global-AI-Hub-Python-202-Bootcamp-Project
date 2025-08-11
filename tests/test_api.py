@@ -27,7 +27,7 @@ def test_delete_book():
     response = client.delete(f"/books/{isbn}")
     assert response.status_code == 200
     assert response.json()["message"] == "Book deleted."
-    # Try deleting again
+    # Try deleting again (should return 404 Not Found)
     response = client.delete(f"/books/{isbn}")
-    assert response.status_code == 200
-    assert "error" in response.json()
+    assert response.status_code == 404
+    assert "detail" in response.json()
