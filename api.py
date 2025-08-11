@@ -1,5 +1,6 @@
 
 from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
 # Pydantic models
@@ -11,6 +12,21 @@ class BookModel(BaseModel):
 class UpdateBookModel(BaseModel):
 	title: str | None = None
 	author: str | None = None
+
+from library import Library
+
+app = FastAPI()
+
+# Add CORS middleware to allow web frontend to access API
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # In production, specify your domain
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+library = Library()
 from fastapi import Body
 @app.put("/books/{isbn}", response_model=BookModel)
 def update_book(isbn: str, update: UpdateBookModel = Body(...)):
