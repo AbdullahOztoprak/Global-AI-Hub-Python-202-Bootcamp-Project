@@ -8,8 +8,20 @@ class BookModel(BaseModel):
 	author: str
 	isbn: str
 
-class ISBNModel(BaseModel):
-	isbn: str
+class UpdateBookModel(BaseModel):
+	title: str | None = None
+	author: str | None = None
+from fastapi import Body
+@app.put("/books/{isbn}", response_model=BookModel)
+def update_book(isbn: str, update: UpdateBookModel = Body(...)):
+	book = library.find_book(isbn)
+	if not book:
+		raise HTTPException(status_code=404, detail="Book not found.")
+	updated = library.update_book(isbn, title=update.title, author=update.author)
+	if updated:
+		book = library.find_book(isbn)
+		return BookModel(title=book.title, author=book.author, isbn=book.isbn)
+	raise HTTPException(status_code=400, detail="Book could not be updated.")
 
 
 from library import Library
