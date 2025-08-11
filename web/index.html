@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Library Management System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .section {
+            margin-bottom: 40px;
+            padding: 25px;
+            border: 2px solid #f0f0f0;
+            border-radius: 10px;
+            background: #fafafa;
+        }
+
+        .section h2 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+            border-bottom: 2px solid #4facfe;
+            padding-bottom: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #555;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #4facfe;
+        }
+
+        button {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(79, 172, 254, 0.4);
+        }
+
+        .delete-btn {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+        }
+
+        .delete-btn:hover {
+            box-shadow: 0 5px 15px rgba(255, 107, 107, 0.4);
+        }
+
+        #booksList {
+            display: grid;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .book-item {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            border-left: 4px solid #4facfe;
+            transition: transform 0.2s;
+        }
+
+        .book-item:hover {
+            transform: translateY(-2px);
+        }
+
+        .book-title {
+            font-size: 1.3em;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .book-author {
+            color: #666;
+            margin-bottom: 5px;
+        }
+
+        .book-isbn {
+            color: #999;
+            font-size: 0.9em;
+            font-family: monospace;
+        }
+
+        .message {
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+            font-weight: 500;
+        }
+
+        .success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .loading {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                margin: 10px;
+            }
+            
+            .content {
+                padding: 20px;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📚 Library Management System</h1>
+            <p>Manage your book collection with ease</p>
+        </div>
+
+        <div class="content">
+            <!-- Add Book Section -->
+            <div class="section">
+                <h2>➕ Add New Book</h2>
+                <div class="form-group">
+                    <label for="addIsbn">ISBN:</label>
+                    <input type="text" id="addIsbn" placeholder="Enter ISBN (e.g., 978-0439023528)">
+                </div>
+                <button onclick="addBook()">Add Book</button>
+            </div>
+
+            <!-- Update Book Section -->
+            <div class="section">
+                <h2>✏️ Update Book</h2>
+                <div class="form-group">
+                    <label for="updateIsbn">ISBN:</label>
+                    <input type="text" id="updateIsbn" placeholder="Enter ISBN to update">
+                </div>
+                <div class="form-group">
+                    <label for="updateTitle">New Title (optional):</label>
+                    <input type="text" id="updateTitle" placeholder="Enter new title">
+                </div>
+                <div class="form-group">
+                    <label for="updateAuthor">New Author (optional):</label>
+                    <input type="text" id="updateAuthor" placeholder="Enter new author">
+                </div>
+                <button onclick="updateBook()">Update Book</button>
+            </div>
+
+            <!-- Delete Book Section -->
+            <div class="section">
+                <h2>🗑️ Delete Book</h2>
+                <div class="form-group">
+                    <label for="deleteIsbn">ISBN:</label>
+                    <input type="text" id="deleteIsbn" placeholder="Enter ISBN to delete">
+                </div>
+                <button class="delete-btn" onclick="deleteBook()">Delete Book</button>
+            </div>
+
+            <!-- Books List Section -->
+            <div class="section">
+                <h2>📖 Your Library</h2>
+                <button onclick="loadBooks()">Refresh Library</button>
+                <div id="booksList"></div>
+            </div>
+
+            <!-- Messages -->
+            <div id="messages"></div>
+        </div>
+    </div>
+
+    <script>
+        // API Base URL - change this to your FastAPI server URL
+        const API_BASE = 'http://127.0.0.1:8000';
+
+        // Utility function to show messages
+        function showMessage(message, type = 'success') {
+            const messagesDiv = document.getElementById('messages');
+            const messageElement = document.createElement('div');
+            messageElement.className = `message ${type}`;
+            messageElement.textContent = message;
+            messagesDiv.appendChild(messageElement);
+            
+            // Auto-remove after 5 seconds
+            setTimeout(() => {
+                messageElement.remove();
+            }, 5000);
+        }
+
+        // Load and display all books
+        async function loadBooks() {
+            try {
+                showMessage('Loading books...', 'loading');
+                const response = await fetch(`${API_BASE}/books`);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const books = await response.json();
+                const booksListDiv = document.getElementById('booksList');
+                
+                if (books.length === 0) {
+                    booksListDiv.innerHTML = '<p style="text-align: center; color: #666; font-style: italic;">No books in your library yet. Add some books!</p>';
+                } else {
+                    booksListDiv.innerHTML = books.map(book => `
+                        <div class="book-item">
+                            <div class="book-title">${book.title}</div>
+                            <div class="book-author">by ${book.author}</div>
+                            <div class="book-isbn">ISBN: ${book.isbn}</div>
+                        </div>
+                    `).join('');
+                }
+                
+                // Remove loading message
+                const loadingMessages = document.querySelectorAll('.message.loading');
+                loadingMessages.forEach(msg => msg.remove());
+                
+            } catch (error) {
+                console.error('Error loading books:', error);
+                showMessage('Failed to load books. Make sure the API server is running.', 'error');
+            }
+        }
+
+        // Add a new book
+        async function addBook() {
+            const isbn = document.getElementById('addIsbn').value.trim();
+            
+            if (!isbn) {
+                showMessage('Please enter an ISBN', 'error');
+                return;
+            }
+
+            try {
+                showMessage('Adding book...', 'loading');
+                const response = await fetch(`${API_BASE}/books`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ isbn: isbn })
+                });
+
+                if (response.ok) {
+                    const book = await response.json();
+                    showMessage(`Book "${book.title}" added successfully!`, 'success');
+                    document.getElementById('addIsbn').value = '';
+                    loadBooks(); // Refresh the list
+                } else {
+                    const error = await response.json();
+                    showMessage(error.detail || 'Failed to add book', 'error');
+                }
+            } catch (error) {
+                console.error('Error adding book:', error);
+                showMessage('Failed to add book. Make sure the API server is running.', 'error');
+            }
+        }
+
+        // Update a book
+        async function updateBook() {
+            const isbn = document.getElementById('updateIsbn').value.trim();
+            const title = document.getElementById('updateTitle').value.trim();
+            const author = document.getElementById('updateAuthor').value.trim();
+            
+            if (!isbn) {
+                showMessage('Please enter an ISBN', 'error');
+                return;
+            }
+
+            if (!title && !author) {
+                showMessage('Please enter at least a title or author to update', 'error');
+                return;
+            }
+
+            try {
+                showMessage('Updating book...', 'loading');
+                const updateData = {};
+                if (title) updateData.title = title;
+                if (author) updateData.author = author;
+
+                const response = await fetch(`${API_BASE}/books/${isbn}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(updateData)
+                });
+
+                if (response.ok) {
+                    const book = await response.json();
+                    showMessage(`Book updated successfully!`, 'success');
+                    document.getElementById('updateIsbn').value = '';
+                    document.getElementById('updateTitle').value = '';
+                    document.getElementById('updateAuthor').value = '';
+                    loadBooks(); // Refresh the list
+                } else {
+                    const error = await response.json();
+                    showMessage(error.detail || 'Failed to update book', 'error');
+                }
+            } catch (error) {
+                console.error('Error updating book:', error);
+                showMessage('Failed to update book. Make sure the API server is running.', 'error');
+            }
+        }
+
+        // Delete a book
+        async function deleteBook() {
+            const isbn = document.getElementById('deleteIsbn').value.trim();
+            
+            if (!isbn) {
+                showMessage('Please enter an ISBN', 'error');
+                return;
+            }
+
+            if (!confirm(`Are you sure you want to delete the book with ISBN: ${isbn}?`)) {
+                return;
+            }
+
+            try {
+                showMessage('Deleting book...', 'loading');
+                const response = await fetch(`${API_BASE}/books/${isbn}`, {
+                    method: 'DELETE'
+                });
+
+                if (response.ok) {
+                    showMessage('Book deleted successfully!', 'success');
+                    document.getElementById('deleteIsbn').value = '';
+                    loadBooks(); // Refresh the list
+                } else {
+                    const error = await response.json();
+                    showMessage(error.detail || 'Failed to delete book', 'error');
+                }
+            } catch (error) {
+                console.error('Error deleting book:', error);
+                showMessage('Failed to delete book. Make sure the API server is running.', 'error');
+            }
+        }
+
+        // Load books when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            loadBooks();
+        });
+
+        // Allow Enter key to submit forms
+        document.getElementById('addIsbn').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') addBook();
+        });
+
+        document.getElementById('deleteIsbn').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') deleteBook();
+        });
+    </script>
+</body>
+</html>
