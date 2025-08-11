@@ -1,3 +1,23 @@
+	def update_book(self, isbn: str, title: str = None, author: str = None):
+		"""Update book details by ISBN. Only non-None fields are updated."""
+		conn = self._get_connection()
+		try:
+			fields = []
+			values = []
+			if title is not None:
+				fields.append("title = ?")
+				values.append(title)
+			if author is not None:
+				fields.append("author = ?")
+				values.append(author)
+			if not fields:
+				return False
+			values.append(isbn)
+			with conn:
+				result = conn.execute(f"UPDATE books SET {', '.join(fields)} WHERE isbn = ?", values)
+			return result.rowcount > 0
+		finally:
+			conn.close()
 
 
 import sqlite3

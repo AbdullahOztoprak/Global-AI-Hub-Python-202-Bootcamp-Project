@@ -1,0 +1,8 @@
+# Python cache and database files
+__pycache__/
+*.db
+# Virtual environments
+.venv/
+# OS files
+.DS_Store
+Thumbs.db
