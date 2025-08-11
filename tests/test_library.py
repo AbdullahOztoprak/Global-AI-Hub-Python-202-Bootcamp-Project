@@ -1,6 +1,6 @@
 import pytest
 import os
-import json
+import sqlite3
 from library import Library
 
 import pytest
@@ -73,11 +73,13 @@ def test_persistence(mock_get, tmp_path):
     assert len(books) == 1
     assert books[0].isbn == "978-0199535675"
 
-def test_corrupted_json(tmp_path):
-    test_file = tmp_path / "test_library.json"
+def test_corrupted_database(tmp_path):
+    # Create a corrupted database file
+    test_file = tmp_path / "test_library.db"
     with open(test_file, "w", encoding="utf-8") as f:
-        f.write("not a json")
-    library = Library(str(test_file))
-    assert library.list_books() == []
-    # Should print error but not raise
-    library.save_books()
+        f.write("not a database")
+    
+    # Should handle corrupted database gracefully
+    import pytest
+    with pytest.raises(sqlite3.DatabaseError):
+        library = Library(str(test_file))
