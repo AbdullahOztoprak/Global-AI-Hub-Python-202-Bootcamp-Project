@@ -39,6 +39,15 @@ uvicorn api:app --reload
 ```
 Open http://127.0.0.1:8000/docs in your browser for interactive API documentation.
 
+### Web Frontend
+After starting the API server, open the web interface:
+
+1. Go to the `web` folder in your project directory.
+2. Open `index.html` in your browser (double-click or right-click → Open with browser).
+3. Use the interface to add, update, and delete books. All actions are synced with your FastAPI backend.
+
+**Note:** The web frontend uses modern HTML/CSS/JavaScript and fetches data from your API at `http://localhost:8000`.
+
 
 ## 📋 API Endpoints
 
@@ -81,15 +90,18 @@ python -m pytest --cov
 - httpx for HTTP requests
 - Pydantic for data validation
 - pytest for testing
+- SQLite for persistent storage
+- HTML/CSS/JavaScript for web frontend
 
 ## 📁 Project Structure
 
 ```
 book.py         # Book class definition
-library.py      # Library class and persistence logic
+library.py      # Library class and SQLite persistence logic
 main.py         # CLI application
 api.py          # FastAPI application
-library.json    # Data storage file
+library.db      # SQLite database file
+web/index.html  # Web frontend interface
 tests/          # Unit tests
 requirements.txt# Project dependencies
 ```
