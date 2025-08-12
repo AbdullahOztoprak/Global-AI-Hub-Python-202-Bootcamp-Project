@@ -209,6 +209,7 @@
                 <input type="text" id="searchInput" placeholder="Search by ISBN, Title, or Author..."
                     style="width: 60%; max-width: 500px; font-size: 1.5em; padding: 18px; border-radius: 12px; border: 2px solid #22c55e; margin-bottom: 18px; text-align: center;">
                 <button onclick="searchBooks()" style="font-size: 1.2em; padding: 14px 32px;">🔍 Search</button>
+                <div id="searchResults" style="width: 60%; max-width: 700px; margin-top: 24px;"></div>
             </div>
             <!-- Add Book Section -->
             <div class="section">
@@ -264,6 +265,8 @@
         // Search books by ISBN, title, or author
         async function searchBooks() {
             const query = document.getElementById('searchInput').value.trim().toLowerCase();
+            const searchResultsDiv = document.getElementById('searchResults');
+            searchResultsDiv.innerHTML = '';
             if (!query) {
                 showMessage('Please enter a search term.', 'error');
                 return;
@@ -280,11 +283,10 @@
                     book.title.toLowerCase().includes(query) ||
                     book.author.toLowerCase().includes(query)
                 );
-                const booksListDiv = document.getElementById('booksList');
                 if (filtered.length === 0) {
-                    booksListDiv.innerHTML = '<p style="text-align: center; color: #666; font-style: italic;">No matching books found.</p>';
+                    searchResultsDiv.innerHTML = '<p style="text-align: center; color: #666; font-style: italic;">No matching books found.</p>';
                 } else {
-                    booksListDiv.innerHTML = filtered.map(book => `
+                    searchResultsDiv.innerHTML = filtered.map(book => `
                         <div class="book-item">
                             <div class="book-title">${book.title}</div>
                             <div class="book-author">by ${book.author}</div>
