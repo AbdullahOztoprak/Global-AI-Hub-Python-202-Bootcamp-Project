@@ -203,6 +203,13 @@
         </div>
 
         <div class="content">
+            <!-- Search Bar Section -->
+            <div class="section"
+                style="display: flex; flex-direction: column; align-items: center; justify-content: center; background: #e6f4ea; border: none; box-shadow: none;">
+                <input type="text" id="searchInput" placeholder="Search by ISBN, Title, or Author..."
+                    style="width: 60%; max-width: 500px; font-size: 1.5em; padding: 18px; border-radius: 12px; border: 2px solid #22c55e; margin-bottom: 18px; text-align: center;">
+                <button onclick="searchBooks()" style="font-size: 1.2em; padding: 14px 32px;">🔍 Search</button>
+            </div>
             <!-- Add Book Section -->
             <div class="section">
                 <h2>➕ Add New Book</h2>
@@ -254,6 +261,45 @@
     </div>
 
     <script>
+        // Search books by ISBN, title, or author
+        async function searchBooks() {
+            const query = document.getElementById('searchInput').value.trim().toLowerCase();
+            if (!query) {
+                showMessage('Please enter a search term.', 'error');
+                return;
+            }
+            try {
+                showMessage('Searching books...', 'loading');
+                const response = await fetch(`${API_BASE}/books`);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const books = await response.json();
+                const filtered = books.filter(book =>
+                    book.isbn.toLowerCase().includes(query) ||
+                    book.title.toLowerCase().includes(query) ||
+                    book.author.toLowerCase().includes(query)
+                );
+                const booksListDiv = document.getElementById('booksList');
+                if (filtered.length === 0) {
+                    booksListDiv.innerHTML = '<p style="text-align: center; color: #666; font-style: italic;">No matching books found.</p>';
+                } else {
+                    booksListDiv.innerHTML = filtered.map(book => `
+                        <div class="book-item">
+                            <div class="book-title">${book.title}</div>
+                            <div class="book-author">by ${book.author}</div>
+                            <div class="book-isbn">ISBN: ${book.isbn}</div>
+                        </div>
+                    `).join('');
+                }
+                // Remove loading message
+                const loadingMessages = document.querySelectorAll('.message.loading');
+                loadingMessages.forEach(msg => msg.remove());
+            } catch (error) {
+                console.error('Error searching books:', error);
+                showMessage('Failed to search books. Make sure the API server is running.', 'error');
+            }
+        }
         // API Base URL - change this to your FastAPI server URL
         const API_BASE = 'http://127.0.0.1:8000';
 
