@@ -20,12 +20,32 @@ git clone https://github.com/AbdullahOztoprak/Global-AI-Hub-Python-202-Bootcamp-
 cd Global-AI-Hub-Python-202-Bootcamp-Project
 ```
 
-### Step 2: Install Dependencies
+### Step 2: Create Virtual Environment (Recommended)
+```bash
+python -m venv .venv
+```
+
+### Step 3: Activate Virtual Environment
+**Windows:**
+```bash
+.\.venv\Scripts\activate
+```
+**Linux/Mac:**
+```bash
+source .venv/bin/activate
+```
+
+### Step 4: Install Dependencies
 ```bash
 pip install -r requirements.txt
 ```
 
 ## 🖥️ Usage
+
+**Important:** Always activate your virtual environment first!
+```bash
+.\.venv\Scripts\activate
+```
 
 ### Command Line Interface
 ```bash
@@ -35,7 +55,7 @@ Follow the menu options to manage your library. Try adding a book with ISBN: `97
 
 ### Web API Server
 ```bash
-uvicorn api:app --reload
+python -m uvicorn api:app --reload
 ```
 Open http://127.0.0.1:8000/docs in your browser for interactive API documentation.
 
