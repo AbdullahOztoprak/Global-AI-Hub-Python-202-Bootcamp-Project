@@ -14,18 +14,11 @@
 
         body {
             font-family: 'Outlook', 'Arial', 'Helvetica Neue', Arial, Helvetica, sans-serif;
-            background: linear-gradient(135deg, #0f172a 0%, #14532d 50%, #22c55e 100%);
-            background-size: 300% 300%;
-            animation: gradientShift 8s ease infinite;
+            background: url('https://example.com/book-background.jpg') no-repeat center center fixed;
+            background-size: cover;
             min-height: 100vh;
             padding: 20px;
             position: relative;
-        }
-
-        @keyframes gradientShift {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
         }
 
         body::before {
