@@ -14,59 +14,143 @@ Created as part of the Global AI Hub Python 202 Bootcamp to practice OOP, API in
 
 ## 🚀 Installation
 
+### Prerequisites
+- **Python 3.8+** (recommended: Python 3.11 or 3.12) - [Microsoft Store](ms-windows-store://search/?query=python) or [python.org](https://python.org/downloads/)
+- Git (optional, for cloning)
+
+### Step 0: Install Python (If Not Already Installed)
+
+**Option 1: Microsoft Store (Recommended for Windows)**
+1. Open Microsoft Store
+2. Search for "Python 3.11" or "Python 3.12"
+3. Install the latest version (Python 3.11 or 3.12)
+4. Verify installation by opening PowerShell and running:
+   ```powershell
+   python --version
+   ```
+
+**Option 2: Official Python Website**
+1. Go to https://python.org/downloads/
+2. Download Python 3.11+ or 3.12+ for Windows
+3. **Important:** During installation, check "Add Python to PATH"
+4. Verify installation by opening PowerShell and running:
+   ```powershell
+   python --version
+   ```
+   or
+   ```powershell
+   py --version
+   ```
+
 ### Step 1: Clone Repository
-```bash
+```powershell
 git clone https://github.com/AbdullahOztoprak/Global-AI-Hub-Python-202-Bootcamp-Project.git
 cd Global-AI-Hub-Python-202-Bootcamp-Project
 ```
 
-### Step 2: Create Virtual Environment (Recommended)
-```bash
+**Or download as ZIP:**
+1. Download the project as ZIP from GitHub
+2. Extract to a folder
+3. Open PowerShell in that folder
+
+### Step 2: Install Dependencies
+
+**Option A: With Virtual Environment (Recommended)**
+```powershell
+# Create virtual environment
 python -m venv .venv
+
+# Activate it (Windows PowerShell)
+.\.venv\Scripts\Activate.ps1
+
+# Install dependencies
+python -m pip install --upgrade pip
+python -m pip install -r requirements.txt
 ```
 
-### Step 3: Activate Virtual Environment
-**Windows:**
-```bash
-.\.venv\Scripts\activate
-```
-**Linux/Mac:**
-```bash
-source .venv/bin/activate
+**Option B: Without Virtual Environment (Global Installation)**
+```powershell
+# Install directly to your system Python
+python -m pip install --upgrade pip
+python -m pip install -r requirements.txt
 ```
 
-### Step 4: Install Dependencies
-```bash
-pip install -r requirements.txt
+**Note:** If you choose Option A, remember to activate the virtual environment every time you work on the project.
+
+**Alternative:** If `python` command doesn't work, try replacing `python` with `py` in all commands above.
+
+### 🔧 Troubleshooting Installation
+
+**If you get "python not found" error:**
+1. Install Python from https://python.org/downloads/
+2. Make sure to check "Add Python to PATH" during installation
+3. Restart PowerShell after installation
+4. Try using `py` instead of `python`
+
+**If you get "pip not found" error:**
+- Use `python -m pip` instead of `pip`
+- Or use `py -m pip` instead of `pip`
+
+**If PowerShell execution policy prevents activation:**
+```powershell
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
 ```
+
+**If pip install fails:**
+```powershell
+python -m pip install --upgrade pip
+python -m pip install -r requirements.txt
+```
+
+**If you still have issues:**
+- Try using `py` instead of `python` in all commands
+- Make sure you're in the correct project directory
 
 ## 🖥️ Usage
 
-**Important:** Always activate your virtual environment first!
-```bash
-.\.venv\Scripts\activate
+**If you used a virtual environment, activate it first:**
+```powershell
+.\.venv\Scripts\Activate.ps1
 ```
 
 ### Command Line Interface
-```bash
+```powershell
 python main.py
 ```
 Follow the menu options to manage your library. Try adding a book with ISBN: `978-0439023528`
 
 ### Web API Server
-```bash
+```powershell
 python -m uvicorn api:app --reload
 ```
-Open http://127.0.0.1:8000/docs in your browser for interactive API documentation.
+- Open http://127.0.0.1:8000/docs in your browser for interactive API documentation
+- The API will be available at http://localhost:8000
+- Press `Ctrl+C` to stop the server
 
 ### Web Frontend
-After starting the API server, open the web interface:
+**Important:** The API server must be running first!
 
-1. Go to the `web` folder in your project directory.
-2. Open `index.html` in your browser (double-click or right-click → Open with browser).
-3. Use the interface to add, update, and delete books. All actions are synced with your FastAPI backend.
+1. Start the API server (see above)
+2. Go to the `web` folder in your project directory
+3. Open `index.html` in your browser (double-click or right-click → Open with browser)
+4. Use the interface to add, update, and delete books
 
-**Note:** The web frontend uses modern HTML/CSS/JavaScript and fetches data from your API at `http://localhost:8000`.
+**Note:** The web frontend fetches data from your API at `http://localhost:8000`. Make sure the API server is running before using the web interface.
+
+### 🔧 Common Usage Issues
+
+**If you get "Module not found" errors:**
+- If using virtual environment: Make sure it's activated
+- If not using virtual environment: Reinstall dependencies globally: `pip install -r requirements.txt`
+
+**If the web frontend doesn't work:**
+- Ensure the API server is running at http://localhost:8000
+- Check browser console (F12) for error messages
+- Try refreshing the page
+
+**If you get database errors:**
+- The `library.db` file will be created automatically
+- Delete `library.db` if you want to start with a fresh database
 
 
 ## 📋 API Endpoints
@@ -93,14 +177,21 @@ PUT /books/978-0439023528
 
 ## 🧪 Testing
 
+**Make sure your virtual environment is activated first!**
+
 Run all tests:
-```bash
+```powershell
 python -m pytest
 ```
 
 Run tests with coverage:
-```bash
+```powershell
 python -m pytest --cov
+```
+
+Run tests with detailed output:
+```powershell
+python -m pytest -v
 ```
 
 ## 🛠️ Tech Stack
