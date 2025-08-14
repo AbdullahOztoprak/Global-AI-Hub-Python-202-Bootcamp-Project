@@ -40,49 +40,78 @@ class Library:
 		Returns True if successful, False otherwise.
 		"""
 		import httpx
+		
+		# First try the ISBN endpoint
 		url = f"https://openlibrary.org/isbn/{isbn}.json"
 		headers = {
 			"User-Agent": "LibraryApp/1.0 (your-email@example.com)"
 		}
+		
 		try:
 			response = httpx.get(url, headers=headers, timeout=10, follow_redirects=True)
 		except httpx.RequestError:
 			print("Bağlantı hatası: API'ye ulaşılamıyor. Lütfen internet bağlantınızı kontrol edin.")
 			return False
+			
 		if response.status_code == 404:
 			print("Kitap bulunamadı. Lütfen geçerli bir ISBN girin.")
 			return False
+			
 		try:
 			response.raise_for_status()
 			data = response.json()
 		except Exception as e:
 			print(f"API'den geçerli veri alınamadı. Hata: {e}")
-			print(f"Status code: {response.status_code}")
-			print(f"Response text: {response.text[:200]}...")
 			return False
+
+		# Get title
 		title = data.get("title")
 		if not title or not isinstance(title, str):
 			print("Kitap başlığı API'den alınamadı.")
 			return False
-		authors = data.get("authors")
+
+		# Try to get authors - improved method
+		author_str = "Unknown"
+		
+		# Method 1: Try to get authors from the main data
+		authors = data.get("authors", [])
 		author_names = []
+		
 		if authors:
 			for author in authors:
 				key = author.get("key")
 				if key:
-					author_url = f"https://openlibrary.org{key}.json"
 					try:
+						author_url = f"https://openlibrary.org{key}.json"
 						author_resp = httpx.get(author_url, headers=headers, timeout=5, follow_redirects=True)
-						author_resp.raise_for_status()
-						author_data = author_resp.json()
-						name = author_data.get("name")
-						if name:
-							author_names.append(name)
+						if author_resp.status_code == 200:
+							author_data = author_resp.json()
+							name = author_data.get("name")
+							if name:
+								author_names.append(name)
 					except Exception:
 						continue
-			author_str = ", ".join(author_names) if author_names else "Unknown"
-		else:
-			author_str = "Unknown"
+		
+		# Method 2: If no authors found, try alternative API endpoint
+		if not author_names:
+			try:
+				alt_url = f"https://openlibrary.org/api/books?bibkeys=ISBN:{isbn}&jscmd=data&format=json"
+				alt_response = httpx.get(alt_url, headers=headers, timeout=10)
+				if alt_response.status_code == 200:
+					alt_data = alt_response.json()
+					book_data = alt_data.get(f"ISBN:{isbn}")
+					if book_data and "authors" in book_data:
+						for author in book_data["authors"]:
+							if "name" in author:
+								author_names.append(author["name"])
+			except Exception:
+				pass
+		
+		# Set author string
+		if author_names:
+			author_str = ", ".join(author_names)
+		
+		# Create book and add to database
 		book = Book(title, author_str, isbn)
 		conn = self._get_connection()
 		try:
@@ -91,6 +120,7 @@ class Library:
 					"INSERT INTO books (title, author, isbn) VALUES (?, ?, ?)",
 					(book.title, book.author, book.isbn)
 				)
+			print(f"Kitap başarıyla eklendi: {book}")
 			return True
 		except sqlite3.IntegrityError:
 			print("Bu ISBN zaten mevcut.")
