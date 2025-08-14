@@ -217,6 +217,19 @@ tests/          # Unit tests
 requirements.txt# Project dependencies
 ```
 
+## 📸 Screenshots
+
+Below are some screenshots to show how the web frontend looks:
+
+- **Library Homepage**
+  ![Library View](assets/Screenshot(4).png)
+
+- **Search Area**
+  ![Search Bar](assets/Screenshot(5).png)
+
+- **Add / Update / Delete Book Area**
+  ![Book Management Area](assets/Screenshot(6).png)
+
 ## 📝 License
 
 This project is provided for educational purposes.
