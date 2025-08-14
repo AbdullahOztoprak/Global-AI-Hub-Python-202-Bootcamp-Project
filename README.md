@@ -12,6 +12,20 @@ Created as part of the Global AI Hub Python 202 Bootcamp to practice OOP, API in
 - Persistent storage with SQLite database (no more JSON file!)
 - Complete test suite with pytest
 
+## 📸 Screenshots
+
+Below are some screenshots to show how the web frontend looks:
+
+- **Library Homepage**
+  ![Library View](assets/Screenshot(4).png)
+
+- **Search Area**
+  ![Search Bar](assets/Screenshot(5).png)
+
+- **Add / Update / Delete Book Area**
+  ![Book Management Area](assets/Screenshot(6).png)
+
+  
 ## 🚀 Installation
 
 ### Prerequisites
@@ -217,18 +231,6 @@ tests/          # Unit tests
 requirements.txt# Project dependencies
 ```
 
-## 📸 Screenshots
-
-Below are some screenshots to show how the web frontend looks:
-
-- **Library Homepage**
-  ![Library View](assets/Screenshot(4).png)
-
-- **Search Area**
-  ![Search Bar](assets/Screenshot(5).png)
-
-- **Add / Update / Delete Book Area**
-  ![Book Management Area](assets/Screenshot(6).png)
 
 ## 📝 License
 
