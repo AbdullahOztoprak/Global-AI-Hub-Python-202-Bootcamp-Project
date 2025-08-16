@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Library Management System</title>
+    <!-- Sayfa stilleri burada tanımlanır -->
     <style>
         * {
             margin: 0;
@@ -14,7 +15,7 @@
 
         body {
             font-family: 'Outlook', 'Arial', 'Helvetica Neue', Arial, Helvetica, sans-serif;
-            background: 
+            background:
                 linear-gradient(135deg, #064e3b 0%, #059669 30%, #10b981 60%, #047857 100%);
             min-height: 100vh;
             padding: 20px;
@@ -29,13 +30,13 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: 
+            background:
                 repeating-linear-gradient(
                     45deg,
                     transparent,
                     transparent 2px,
-                    rgba(255,255,255,0.03) 2px,
-                    rgba(255,255,255,0.03) 4px
+                    rgba(255, 255, 255, 0.03) 2px,
+                    rgba(255, 255, 255, 0.03) 4px
                 );
             pointer-events: none;
             z-index: -1;
@@ -85,8 +86,13 @@
         }
 
         @keyframes shimmer {
-            0% { transform: translateX(-100%); }
-            100% { transform: translateX(100%); }
+            0% {
+                transform: translateX(-100%);
+            }
+
+            100% {
+                transform: translateX(100%);
+            }
         }
 
         .header h1 {
@@ -374,7 +380,7 @@
         </div>
 
         <div class="content">
-            <!-- Search Bar Section -->
+            <!-- Arama bölümü: Kitapları ISBN, başlık veya yazar ile arayabilirsiniz -->
             <div class="section"
                 style="display: flex; flex-direction: column; align-items: center; justify-content: center; background: #e6f4ea; border: none; box-shadow: none;">
                 <input type="text" id="searchInput" placeholder="Search by ISBN, Title, or Author..."
@@ -382,7 +388,7 @@
                 <button onclick="searchBooks()" style="font-size: 1.2em; padding: 14px 32px;">🔍 Search</button>
                 <div id="searchResults" style="width: 60%; max-width: 700px; margin-top: 24px;"></div>
             </div>
-            <!-- Add Book Section -->
+            <!-- Kitap ekleme bölümü -->
             <div class="section">
                 <h2>➕ Add New Book</h2>
                 <div class="form-group">
@@ -392,7 +398,7 @@
                 <button onclick="addBook()">Add Book</button>
             </div>
 
-            <!-- Update Book Section -->
+            <!-- Kitap güncelleme bölümü -->
             <div class="section">
                 <h2>✏️ Update Book</h2>
                 <div class="form-group">
@@ -410,7 +416,7 @@
                 <button onclick="updateBook()">Update Book</button>
             </div>
 
-            <!-- Delete Book Section -->
+            <!-- Kitap silme bölümü -->
             <div class="section">
                 <h2>🗑️ Delete Book</h2>
                 <div class="form-group">
@@ -420,20 +426,37 @@
                 <button class="delete-btn" onclick="deleteBook()">Delete Book</button>
             </div>
 
-            <!-- Books List Section -->
+            <!-- Kütüphanedeki kitapları listeleme bölümü -->
             <div class="section">
                 <h2>📖 Your Library</h2>
                 <button onclick="loadBooks()">Refresh Library</button>
                 <div id="booksList"></div>
             </div>
 
-            <!-- Messages -->
+            <!-- Mesajlar bölümü: işlemlerle ilgili geri bildirimler burada gösterilir -->
             <div id="messages"></div>
         </div>
     </div>
 
     <script>
-        // Search books by ISBN, title, or author
+        // API adresi
+        const API_BASE = 'http://127.0.0.1:8000';
+
+        // Kullanıcıya mesaj göstermek için fonksiyon
+        function showMessage(message, type = 'success') {
+            const messagesDiv = document.getElementById('messages');
+            const messageElement = document.createElement('div');
+            messageElement.className = `message ${type}`;
+            messageElement.textContent = message;
+            messagesDiv.appendChild(messageElement);
+
+            // Auto-remove after 5 seconds
+            setTimeout(() => {
+                messageElement.remove();
+            }, 5000);
+        }
+
+        // Kitapları arama fonksiyonu
         async function searchBooks() {
             const query = document.getElementById('searchInput').value.trim().toLowerCase();
             const searchResultsDiv = document.getElementById('searchResults');
@@ -449,6 +472,7 @@
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
                 const books = await response.json();
+                // Arama sonucunu filtrele
                 const filtered = books.filter(book =>
                     book.isbn.toLowerCase().includes(query) ||
                     book.title.toLowerCase().includes(query) ||
@@ -465,7 +489,7 @@
                         </div>
                     `).join('');
                 }
-                // Remove loading message
+                // Yükleniyor mesajını kaldır
                 const loadingMessages = document.querySelectorAll('.message.loading');
                 loadingMessages.forEach(msg => msg.remove());
             } catch (error) {
@@ -473,24 +497,8 @@
                 showMessage('Failed to search books. Make sure the API server is running.', 'error');
             }
         }
-        // API Base URL - change this to your FastAPI server URL
-        const API_BASE = 'http://127.0.0.1:8000';
 
-        // Utility function to show messages
-        function showMessage(message, type = 'success') {
-            const messagesDiv = document.getElementById('messages');
-            const messageElement = document.createElement('div');
-            messageElement.className = `message ${type}`;
-            messageElement.textContent = message;
-            messagesDiv.appendChild(messageElement);
-
-            // Auto-remove after 5 seconds
-            setTimeout(() => {
-                messageElement.remove();
-            }, 5000);
-        }
-
-        // Load and display all books
+        // Kütüphanedeki tüm kitapları yükler
         async function loadBooks() {
             try {
                 showMessage('Loading books...', 'loading');
@@ -515,7 +523,7 @@
                     `).join('');
                 }
 
-                // Remove loading message
+                // Yükleniyor mesajını kaldır
                 const loadingMessages = document.querySelectorAll('.message.loading');
                 loadingMessages.forEach(msg => msg.remove());
 
@@ -525,7 +533,7 @@
             }
         }
 
-        // Add a new book
+        // Yeni kitap ekleme fonksiyonu
         async function addBook() {
             const isbn = document.getElementById('addIsbn').value.trim();
 
@@ -548,7 +556,7 @@
                     const book = await response.json();
                     showMessage(`Book "${book.title}" added successfully!`, 'success');
                     document.getElementById('addIsbn').value = '';
-                    loadBooks(); // Refresh the list
+                    loadBooks(); // Listeyi güncelle
                 } else {
                     const error = await response.json();
                     showMessage(error.detail || 'Failed to add book', 'error');
@@ -559,7 +567,7 @@
             }
         }
 
-        // Update a book
+        // Kitap güncelleme fonksiyonu
         async function updateBook() {
             const isbn = document.getElementById('updateIsbn').value.trim();
             const title = document.getElementById('updateTitle').value.trim();
@@ -595,7 +603,7 @@
                     document.getElementById('updateIsbn').value = '';
                     document.getElementById('updateTitle').value = '';
                     document.getElementById('updateAuthor').value = '';
-                    loadBooks(); // Refresh the list
+                    loadBooks(); // Listeyi güncelle
                 } else {
                     const error = await response.json();
                     showMessage(error.detail || 'Failed to update book', 'error');
@@ -606,7 +614,7 @@
             }
         }
 
-        // Delete a book
+        // Kitap silme fonksiyonu
         async function deleteBook() {
             const isbn = document.getElementById('deleteIsbn').value.trim();
 
@@ -628,7 +636,7 @@
                 if (response.ok) {
                     showMessage('Book deleted successfully!', 'success');
                     document.getElementById('deleteIsbn').value = '';
-                    loadBooks(); // Refresh the list
+                    loadBooks(); // Listeyi güncelle
                 } else {
                     const error = await response.json();
                     showMessage(error.detail || 'Failed to delete book', 'error');
@@ -639,12 +647,12 @@
             }
         }
 
-        // Load books when page loads
+        // Sayfa yüklendiğinde kitapları göster
         document.addEventListener('DOMContentLoaded', function () {
             loadBooks();
         });
 
-        // Allow Enter key to submit forms
+        // Enter tuşu ile form gönderme
         document.getElementById('addIsbn').addEventListener('keypress', function (e) {
             if (e.key === 'Enter') addBook();
         });
