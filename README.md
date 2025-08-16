@@ -146,7 +146,7 @@ python -m uvicorn api:app --reload
 
 1. Start the API server (see above)
 2. Go to the `web` folder in your project directory
-3. Open `index.html` in your browser (double-click or right-click → Open with browser)
+3. Open `index.html` in your browser (double-click, right-click and select 'Open with browser' or drag the file into your browser window to open it in a new tab)
 4. Use the interface to add, update, and delete books
 
 **Note:** The web frontend fetches data from your API at `http://localhost:8000`. Make sure the API server is running before using the web interface.
