@@ -1,4 +1,5 @@
 # Python cache and database files
+*.pyc
 __pycache__/
 # *.db
 # Virtual environments
