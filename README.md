@@ -25,6 +25,9 @@ Below are some screenshots to show how the web frontend looks:
 - **Add / Update / Delete Book Area**
   ![Book Management Area](assets/Screenshot(6).png)
 
+  - **Tests**
+  ![pytest tests](assets/Screenshot(7).png)
+
   
 ## 🚀 Installation
 
